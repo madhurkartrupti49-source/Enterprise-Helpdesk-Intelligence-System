@@ -22,7 +22,7 @@ df["Description"] = df["Description"].apply(clean_text)
 vectorizer = TfidfVectorizer()
 
 X = vectorizer.fit_transform(df["Description"])
-y = df["Category"]
+y = df["Assigned_Team"]
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -43,13 +43,16 @@ print(cm)
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 print("Model Training Completed Successfully!")
-joblib.dump(model, "Models/category_model.pkl")
+joblib.dump(model, "Models/team_model.pkl")
 joblib.dump(vectorizer, "Models/tfidf_vectorizer.pkl")
 print("Model Saved Successfully!")
 new_ticket = ["User cannot connect to office VPN"]
 new_ticket = [clean_text(text) for text in new_ticket]
 new_ticket_vector = vectorizer.transform(new_ticket)
 prediction = model.predict(new_ticket_vector)
-print("Predicted Category:", prediction[0])
+print("Predicted Team:", prediction[0])
 if __name__ == "__main__":
     print("Training Completed Successfully!")
+print(df.groupby("Category")["Assigned_Team"].value_counts())
+
+print(df.groupby("Category")["Priority"].value_counts())
