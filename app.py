@@ -1,6 +1,8 @@
 import streamlit as st
 import joblib
 import re
+import pandas as pd
+import os
 
 def clean_text(text):
     text = text.lower()
@@ -33,7 +35,7 @@ if st.button("Predict"):
         team = team_model.predict(ticket_vector)[0]
         priority = priority_model.predict(ticket_vector)[0]
         category_probability = category_model.predict_proba(ticket_vector)
-        st.write(category_probability)
+        #st.write(category_probability)
 
 
         confidence = max(category_probability[0]) * 100
@@ -47,3 +49,34 @@ if st.button("Predict"):
         st.write("📂 Category:", category)
         st.write("👨‍💻 Assigned Team:", team)
         st.write("⚡ Priority:", priority)
+
+        history = pd.DataFrame({
+            "Ticket": [ticket],
+            "Category": [category],
+            "Assigned Team": [team],
+            "Priority": [priority]
+        })
+
+        history.to_csv(
+            "Database/prediction.csv",
+            mode="a",
+            header=False,
+            index=False
+        )
+
+        st.success("Prediction Saved Successfully!")
+        st.subheader("Prediction History")
+
+        history = pd.read_csv("Database/prediction.csv")
+
+        st.dataframe(history)
+
+        st.subheader("Dashboard Summary")
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric("Total Predictions", len(history))
+
+        col2.metric("Unique Categories", history["Category"].nunique())
+
+        col3.metric("Unique Teams", history["Assigned Team"].nunique())
