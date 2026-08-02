@@ -3,6 +3,7 @@ import joblib
 import re
 import pandas as pd
 import os
+import plotly.express as px
 
 def clean_text(text):
     text = text.lower()
@@ -69,14 +70,75 @@ if st.button("Predict"):
 
         history = pd.read_csv("Database/prediction.csv")
 
-        st.dataframe(history)
+        search = st.text_input("🔍 Search Ticket")
 
-        st.subheader("Dashboard Summary")
+        if search:
+            filtered_history = history[
+        history["Ticket"].str.contains(search, case=False, na=False)
+    ]
+    st.dataframe(filtered_history)
+else:
+    st.dataframe(history)
 
-        col1, col2, col3 = st.columns(3)
+    st.subheader("Dashboard Summary")
 
-        col1.metric("Total Predictions", len(history))
+    col1, col2, col3 = st.columns(3)
 
-        col2.metric("Unique Categories", history["Category"].nunique())
+    col1.metric("Total Predictions", len(history))
 
-        col3.metric("Unique Teams", history["Assigned Team"].nunique())
+    col2.metric("Unique Categories", history["Category"].nunique())
+
+    col3.metric("Unique Teams", history["Assigned Team"].nunique())
+
+    st.subheader("Category Distribution")
+
+    category_count = history["Category"].value_counts().reset_index()
+    category_count.columns = ["Category", "Count"]
+
+    fig_Cat = px.bar(
+                    category_count,
+                    x="Category",
+                    y="Count",
+                    color="Category",
+                    title="Category Distribution"
+                )
+
+    st.plotly_chart(fig_Cat, use_container_width=True)
+    st.subheader("Priority Distribution")
+
+    priority_count = history["Priority"].value_counts().reset_index()
+    priority_count.columns = ["Priority", "Count"]
+
+    fig_pie = px.pie(
+    priority_count,
+    names="Priority",
+    values="Count",
+    title="Priority Distribution"
+    )
+
+    st.plotly_chart(fig_pie, use_container_width=True)
+
+    st.subheader("Assigned Team Distribution")
+
+    team_count = history["Assigned Team"].value_counts().reset_index()
+    team_count.columns = ["Assigned Team", "Count"]
+
+    fig_team = px.bar(
+        team_count,
+        x="Assigned Team",
+        y="Count",
+        color="Assigned Team",
+        title="Assigned Team Distribution"
+    )
+
+    st.plotly_chart(fig_team, use_container_width=True)
+
+    st.subheader("Download Prediction History")
+
+    with open("Database/prediction.csv", "rb") as file:
+        st.download_button(
+        label="📥 Download Prediction History",
+        data=file,
+        file_name="prediction_history.csv",
+        mime="text/csv"
+    )
