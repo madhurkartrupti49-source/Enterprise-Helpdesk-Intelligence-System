@@ -47,11 +47,6 @@ joblib.dump(model, "Models/priority_model.pkl")
 joblib.dump(vectorizer, "Models/tfidf_vectorizer.pkl")
 print("Model Saved Successfully!")
 new_ticket = ["User cannot connect to office VPN"]
-new_ticket = [clean_text(text) for text in new_ticket]
-new_ticket_vector = vectorizer.transform(new_ticket)
-prediction = model.predict(new_ticket_vector)
-print("Predicted priority:", prediction[0])
-new_ticket = ["User cannot connect to office VPN"]
 
 new_ticket = [clean_text(text) for text in new_ticket]
 
