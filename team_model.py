@@ -53,6 +53,24 @@ prediction = model.predict(new_ticket_vector)
 print("Predicted Team:", prediction[0])
 if __name__ == "__main__":
     print("Training Completed Successfully!")
-print(df.groupby("Category")["Assigned_Team"].value_counts())
+print("\nTeam Test Predictions:")
 
-print(df.groupby("Category")["Priority"].value_counts())
+test_tickets = [
+    "Email is not working",
+    "Outlook is not working",
+    "VPN is not connecting",
+    "Laptop is not turning on",
+    "Password reset required",
+    "Antivirus detected a threat"
+]
+
+test_tickets_clean = [
+    clean_text(text) for text in test_tickets
+]
+
+test_vectors = vectorizer.transform(test_tickets_clean)
+
+test_predictions = model.predict(test_vectors)
+
+for text, pred in zip(test_tickets, test_predictions):
+    print(f"{text} --> {pred}")

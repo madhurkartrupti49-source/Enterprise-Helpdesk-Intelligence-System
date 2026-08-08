@@ -51,5 +51,38 @@ new_ticket = [clean_text(text) for text in new_ticket]
 new_ticket_vector = vectorizer.transform(new_ticket)
 prediction = model.predict(new_ticket_vector)
 print("Predicted Category:", prediction[0])
+print("\nTest Predictions:")
+
+test_tickets = [
+    "Email is not working",
+    "Outlook is not working",
+    "VPN is not connecting",
+    "Laptop is not turning on",
+    "Password reset required",
+    "Antivirus detected a threat"
+]
+
+test_tickets_clean = [
+    clean_text(text) for text in test_tickets
+]
+
+test_vectors = vectorizer.transform(test_tickets_clean)
+
+test_predictions = model.predict(test_vectors)
+
+for text, pred in zip(test_tickets, test_predictions):
+    print(f"{text} --> {pred}")
 if __name__ == "__main__":
     print("Training Completed Successfully!")
+
+print("\nCategory Distribution:")
+print(df["Category"].value_counts())
+
+print("\nEmail Related Tickets:")
+print(
+    df[df["Description"].str.contains(
+        "email|mail|outlook",
+        case=False,
+        na=False
+    )][["Description", "Category"]].head(20)
+)

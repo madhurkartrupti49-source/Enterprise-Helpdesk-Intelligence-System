@@ -19,352 +19,117 @@ st.set_page_config(
     page_title="Enterprise Helpdesk Intelligence System"
 )
 # Professional AI Dashboard Styling
-
-st.markdown(
-"""
+st.markdown("""
 <style>
 
-/* Full Background */
-
 .stApp {
-
-    background:
-    linear-gradient(
-        135deg,
-        #0f172a,
-        #1e3a5f,
-        #0b1120
-    );
-
+    background: linear-gradient(135deg, #f5f8fc, #eaf2fb);
 }
 
-
-
-/* Main Container */
-
+/* Main container */
 .block-container {
-
-    padding-top:2rem;
-
+    max-width: 1100px;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
 }
-
-
 
 /* Main Title */
-
 h1 {
-
-    color:#00eaff !important;
-
-    text-align:center;
-
-    font-size:42px;
-
-    font-weight:900;
-
-    text-shadow:
-
-    0 0 10px #00eaff,
-
-    0 0 25px #00eaff;
-
+    color: #17324d;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 0.5px;
 }
-
-
 
 /* Headings */
-
-h2,h3 {
-
-    color:white !important;
-
-    font-weight:800;
-
-    letter-spacing:1px;
-
-    text-shadow:
-
-    0 0 8px rgba(255,255,255,0.5);
-
+h2, h3 {
+    color: #17324d;
+    font-weight: 700;
 }
 
-
-
-/* Normal Text */
-
-p,label {
-
-    color:#f8fafc !important;
-
-    font-weight:500;
-
+/* Normal text */
+p, label {
+    color: #40566b;
 }
 
-
-
-/* Text Area */
-/* Ticket Description Box */
-
+/* Ticket input */
 .stTextArea textarea {
-
     background-color: #ffffff !important;
-
-    color: #111827 !important;
-
-    font-size:16px;
-
-    font-weight:600;
-
-    border-radius:15px;
-
-    border:2px solid #00eaff;
-
+    border: 1px solid #d5e1ed !important;
+    border-radius: 12px !important;
+    color: #17324d !important;
+    box-shadow: 0 3px 12px rgba(40, 70, 100, 0.08);
 }
 
-
-/* Placeholder Text */
-
-.stTextArea textarea::placeholder {
-
-    color:#64748b !important;
-
-    font-weight:500;
-
-}
-
-
-
-/* Search Box */
-
+/* Search box */
 .stTextInput input {
-
-    background-color:#ffffff !important;
-
-    color:#111827 !important;
-
-    font-size:16px;
-
-    font-weight:600;
-
-    border-radius:12px;
-
-    border:2px solid #00eaff;
-
+    background-color: #ffffff !important;
+    border: 1px solid #d5e1ed !important;
+    border-radius: 10px !important;
+    color: #17324d !important;
 }
-
-
-.stTextInput input::placeholder {
-
-    color:#64748b !important;
-
-}
-
-
-
-
-/* Search Box */
-
-.stTextInput input {
-
-    background:
-
-    rgba(255,255,255,0.12);
-
-    color:white;
-
-    border-radius:12px;
-
-}
-
-
-
-/* Metric Cards */
-
-div[data-testid="stMetric"] {
-
-    background:
-
-    linear-gradient(
-
-    135deg,
-
-    rgba(255,255,255,0.18),
-
-    rgba(255,255,255,0.05)
-
-    );
-
-
-    border-radius:20px;
-
-
-    padding:20px;
-
-
-    border:1px solid rgba(0,234,255,0.5);
-
-
-    box-shadow:
-
-    0 0 20px rgba(0,234,255,0.25);
-
-}
-
-
-
-/* Metric Numbers */
-
-div[data-testid="stMetricValue"] {
-
-    color:#00ffcc !important;
-
-    font-size:35px;
-
-    font-weight:900;
-
-}
-
-
 
 /* Buttons */
-
 .stButton button {
-
-
-    background:
-
-    linear-gradient(
-
-    90deg,
-
-    #00c6ff,
-
-    #0072ff
-
-    );
-
-
-    color:white;
-
-    font-weight:800;
-
-    border-radius:12px;
-
-
-    box-shadow:
-
-    0 0 15px rgba(0,198,255,0.6);
-
+    background: #2878d0;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.45rem 1.2rem;
+    font-weight: 600;
+    transition: 0.2s;
 }
 
-
-
-/* Download Button */
-
-.stDownloadButton button {
-
-
-    background:
-
-    linear-gradient(
-
-    90deg,
-
-    #22c55e,
-
-    #16a34a
-
-    );
-
-
-    color:white;
-
-    font-weight:700;
-
-    border-radius:12px;
-
+.stButton button:hover {
+    background: #1f63ad;
+    transform: translateY(-1px);
 }
 
+/* Metric cards */
+[data-testid="stMetric"] {
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid #dbe6f0;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 5px 18px rgba(45, 75, 105, 0.09);
+}
 
+/* Metric value */
+[data-testid="stMetricValue"] {
+    color: #1769aa;
+    font-weight: 750;
+}
 
-/* Data Table */
-
+/* History table */
 [data-testid="stDataFrame"] {
-
-    border-radius:15px;
-
-    overflow:hidden;
-
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(40, 70, 100, 0.08);
 }
 
+/* Chart containers */
+.stPlotlyChart {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid #dce7f1;
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 5px 18px rgba(45, 75, 105, 0.07);
+}
 
-
-/* Alert */
-
+/* Success message */
 .stAlert {
-
-    border-radius:15px;
-
-}
-/* Chart Containers */
-
-div[data-testid="stPlotlyChart"] {
-
-    background:
-    rgba(255,255,255,0.08);
-
-    border-radius:25px;
-
-    padding:15px;
-
-    border:1px solid rgba(0,234,255,0.3);
-
-    box-shadow:
-    0 0 20px rgba(0,234,255,0.15);
-
+    border-radius: 12px;
 }
 
-
-/* Prediction History Table */
-
-div[data-testid="stDataFrame"] {
-
-    background:
-    rgba(255,255,255,0.08);
-
-    border-radius:20px;
-
-    padding:10px;
-
+/* Download button */
+.stDownloadButton button {
+    border-radius: 10px;
+    font-weight: 600;
 }
-
-
-/* Info Boxes */
-
-.stAlert {
-
-    background:
-    rgba(255,255,255,0.12);
-
-    border-radius:20px;
-
-}
-
-
-
-/* Space between sections */
-
-h2,h3 {
-
-    margin-top:25px;
-
-}
-
 
 </style>
-""",
-unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
+
 
 
 
@@ -380,7 +145,85 @@ st.write("AI Powered Ticket Classification System")
 
 
 
-ticket = st.text_area("Enter Ticket Description")
+# Initialize ticket
+if "ticket_box" not in st.session_state:
+    st.session_state.ticket_box = ""
+
+
+# Function to update ticket description
+def update_ticket():
+    st.session_state.ticket_box = st.session_state.recommended_description
+
+
+# Enter Ticket Description
+ticket = st.text_area(
+    "Enter Ticket Description",
+    key="ticket_box"
+)
+
+
+st.write("💡 Recommended Ticket Descriptions")
+
+
+recommendations = {
+
+    "📧 Email Issue": [
+        "Email is not working",
+        "Outlook is not opening",
+        "Emails are not sending",
+        "Emails are not receiving",
+        "Email client is not syncing"
+    ],
+
+    "🌐 VPN Issue": [
+        "VPN is not connecting",
+        "VPN connection keeps dropping",
+        "Unable to access VPN",
+        "VPN authentication failed",
+        "VPN is very slow"
+    ],
+
+    "💻 Laptop Issue": [
+        "Laptop is not turning on",
+        "Laptop is running very slow",
+        "Laptop screen is not working",
+        "Laptop is overheating",
+        "Laptop keeps restarting"
+    ],
+
+    "🔐 Security Issue": [
+        "Antivirus detected a threat",
+        "Suspicious activity detected",
+        "Malware detected on system",
+        "Phishing email received",
+        "Security alert appeared"
+    ],
+
+    "🔑 Password Issue": [
+        "Password reset required",
+        "Unable to login",
+        "Account is locked",
+        "Password has expired",
+        "Forgot my password"
+    ]
+}
+
+
+selected_issue = st.selectbox(
+    "Select Issue Type",
+    ["-- Select an Issue --"] + list(recommendations.keys())
+)
+
+
+if selected_issue != "-- Select an Issue --":
+
+    st.selectbox(
+        "Select Recommended Description",
+        recommendations[selected_issue],
+        key="recommended_description",
+        on_change=update_ticket
+    )
+
 
 
 
@@ -395,35 +238,112 @@ if st.button("Predict"):
 
         ticket_vector = vectorizer.transform([clean_ticket])
 
+        # Smart Category Rules
 
-        category = category_model.predict(ticket_vector)[0]
-        team = team_model.predict(ticket_vector)[0]
+        ticket_lower = ticket.lower()
+
+        if any(word in ticket_lower for word in [
+            "email",
+            "outlook",
+            "mailbox",
+            "mail",
+            "gmail"
+        ]):
+            category = "Software"
+
+        elif any(word in ticket_lower for word in [
+            "vpn",
+            "wifi",
+            "network",
+            "internet",
+            "router",
+            "connection"
+        ]):
+            category = "Network"
+
+        elif any(word in ticket_lower for word in [
+            "password",
+            "login",
+            "account",
+            "access",
+            "permission"
+        ]):
+            category = "Access"
+
+        elif any(word in ticket_lower for word in [
+            "virus",
+            "antivirus",
+            "malware",
+            "phishing",
+            "security",
+            "threat"
+        ]):
+            category = "Security"
+
+        else:
+            category = category_model.predict(ticket_vector)[0]
+                     # Smart Team Rules
+
+        if any(word in ticket_lower for word in [
+            "email",
+            "outlook",
+            "mailbox",
+            "mail",
+            "gmail"
+        ]):
+            team = "Application Support"
+
+        elif any(word in ticket_lower for word in [
+            "vpn",
+            "wifi",
+            "network",
+            "internet",
+            "router",
+            "connection"
+        ]):
+            team = "Network Team"
+
+        elif any(word in ticket_lower for word in [
+            "virus",
+            "antivirus",
+            "malware",
+            "phishing",
+            "security",
+            "threat"
+        ]):
+            team = "Security Team"
+
+        else:
+            team = team_model.predict(ticket_vector)[0]
+
         priority = priority_model.predict(ticket_vector)[0]
+        
+    priority = priority_model.predict(ticket_vector)[0]
 
 
-        probability = category_model.predict_proba(ticket_vector)
-        confidence = max(probability[0]) * 100
+    probability = category_model.predict_proba(ticket_vector)
+    confidence = max(probability[0]) * 100
 
 
-        st.success("Prediction Completed Successfully!")
+    st.success("Prediction Completed Successfully!")
 
 
-        st.subheader("Prediction Results")
+    st.subheader("Prediction Results")
 
-        st.write(
+    st.write(
             "Confidence :",
             round(confidence,2),
             "%"
         )
 
-        st.write("📂 Category:", category)
-        st.write("👨‍💻 Assigned Team:", team)
-        st.write("⚡ Priority:", priority)
+    st.write("📂 Category:", category)
+    st.write("👨‍💻 Assigned Team:", team)
+    st.write("⚡ Priority:", priority)
 
 
         # Save Prediction
 
-        new_history = pd.DataFrame({
+    new_history = pd.DataFrame({
 
             "Ticket":[ticket],
             "Category":[category],
@@ -433,20 +353,20 @@ if st.button("Predict"):
         })
 
 
-        os.makedirs("Database", exist_ok=True)
+    os.makedirs("Database", exist_ok=True)
 
 
-        file_path = "Database/prediction.csv"
+    file_path = "Database/prediction.csv"
 
 
-        if not os.path.exists(file_path):
+    if not os.path.exists(file_path):
 
             new_history.to_csv(
                 file_path,
                 index=False
             )
 
-        else:
+    else:
 
             new_history.to_csv(
                 file_path,
@@ -456,7 +376,7 @@ if st.button("Predict"):
             )
 
 
-        st.success("Prediction Saved Successfully!")
+    st.success("Prediction Saved Successfully!")
 
 
 
@@ -570,7 +490,7 @@ if len(history) > 0:
         y="Count",
         color="Category",
         title="Category Distribution",
-        template="plotly_dark"
+        template="plotly_white"
     )
     fig_cat.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
@@ -613,7 +533,7 @@ if len(history) > 0:
         names="Priority",
         values="Count",
         title="Priority Distribution",
-        template="plotly_dark"
+        template="plotly_white"
     )
     fig_pie.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
@@ -658,7 +578,7 @@ if len(history) > 0:
         y="Count",
         color="Assigned Team",
         title="Assigned Team Distribution",
-        template="plotly_dark"
+        template="plotly_white"
     )
     fig_team.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
