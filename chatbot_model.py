@@ -22,7 +22,10 @@ df["Search_Text"] = (
 )
 
 
-# Create TF-IDF model
+# =========================================================
+# CREATE MAIN CHATBOT TF-IDF MODEL
+# =========================================================
+
 vectorizer = TfidfVectorizer(
     lowercase=True,
     stop_words="english"
@@ -61,6 +64,8 @@ print("Chatbot Model Created Successfully!")
 # =========================================================
 
 def chatbot_response(user_question):
+
+    user_question = user_question.lower().strip()
 
     user_vector = vectorizer.transform(
         [user_question]
@@ -109,31 +114,107 @@ troubleshooting_df = pd.read_csv(
 )
 
 
-def get_troubleshooting_steps(issue):
+# =========================================================
+# CREATE TROUBLESHOOTING ISSUE MODEL
+# =========================================================
 
-    issue = issue.lower().strip()
+troubleshooting_issues = (
+    troubleshooting_df["Issue"]
+    .dropna()
+    .drop_duplicates()
+    .reset_index(drop=True)
+)
 
-    # First try exact match
+
+troubleshooting_vectorizer = TfidfVectorizer(
+    lowercase=True,
+    stop_words="english"
+)
+
+
+troubleshooting_vectors = (
+    troubleshooting_vectorizer.fit_transform(
+        troubleshooting_issues
+    )
+)
+
+
+# =========================================================
+# FIND BEST TROUBLESHOOTING ISSUE
+# =========================================================
+
+def get_troubleshooting_steps(user_issue):
+
+    user_issue = user_issue.lower().strip()
+
+
+    # -----------------------------------------------------
+    # FIRST: EXACT MATCH
+    # -----------------------------------------------------
+
+    exact_match = troubleshooting_df[
+        troubleshooting_df["Issue"]
+        .str.lower()
+        .str.strip()
+        == user_issue
+    ]
+
+
+    if len(exact_match) > 0:
+
+        return (
+            exact_match.reset_index(drop=True),
+            exact_match.iloc[0]["Issue"]
+        )
+
+
+    # -----------------------------------------------------
+    # SECOND: AI / TF-IDF SIMILARITY MATCH
+    # -----------------------------------------------------
+
+    user_vector = troubleshooting_vectorizer.transform(
+        [user_issue]
+    )
+
+
+    similarity = cosine_similarity(
+        user_vector,
+        troubleshooting_vectors
+    )
+
+
+    best_match_index = similarity.argmax()
+
+    best_score = similarity[0][best_match_index]
+
+
+    matched_issue = troubleshooting_issues.iloc[
+        best_match_index
+    ]
+
+
+    # -----------------------------------------------------
+    # MINIMUM SIMILARITY
+    # -----------------------------------------------------
+
+    if best_score < 0.15:
+
+        return None, None
+
+
+    # Get all steps for matched issue
     issue_data = troubleshooting_df[
         troubleshooting_df["Issue"]
         .str.lower()
         .str.strip()
-        == issue
+        == matched_issue.lower().strip()
     ]
 
-    # If exact match is not found,
-    # try partial keyword matching
-    if len(issue_data) == 0:
 
-        keywords = issue.split()
-
-        mask = troubleshooting_df["Issue"].str.lower().apply(
-            lambda x: all(word in x for word in keywords)
-        )
-
-        issue_data = troubleshooting_df[mask]
-
-    return issue_data.reset_index(drop=True)
+    return (
+        issue_data.reset_index(drop=True),
+        matched_issue
+    )
 
 
 # =========================================================
@@ -144,6 +225,8 @@ def get_support_team(issue):
 
     issue = issue.lower().strip()
 
+
+    # Exact match in knowledge base
     result = df[
         df["Question"]
         .str.lower()
@@ -151,20 +234,35 @@ def get_support_team(issue):
         == issue
     ]
 
+
     if len(result) > 0:
 
         return result.iloc[0]["Support_Team"]
+
+
+    # -----------------------------------------------------
+    # Try AI matching if exact match is not available
+    # -----------------------------------------------------
+
+    result = chatbot_response(issue)
+
+
+    if result["found"]:
+
+        return result["support_team"]
+
 
     return "Helpdesk Support Team"
 
 
 # =========================================================
-# CHECK USER RESPONSE
+# CHECK IF USER SAYS ISSUE IS NOT WORKING
 # =========================================================
 
 def is_not_working(message):
 
     message = message.lower().strip()
+
 
     not_working_phrases = [
         "still not working",
@@ -177,10 +275,17 @@ def is_not_working(message):
         "not solve",
         "not solved",
         "issue remains",
-        "no",
         "no change",
-        "problem remains"
+        "problem remains",
+        "not resolved",
+        "no",
+        "remains problem",
+        "problem still exists",
+        "issue still exists",
+        "still having problem",
+        "still facing issue",
     ]
+
 
     return any(
         phrase in message
@@ -188,9 +293,14 @@ def is_not_working(message):
     )
 
 
+# =========================================================
+# CHECK IF USER DOES NOT UNDERSTAND
+# =========================================================
+
 def is_not_understood(message):
 
     message = message.lower().strip()
+
 
     phrases = [
         "don't understand",
@@ -199,8 +309,10 @@ def is_not_understood(message):
         "how",
         "what does this mean",
         "explain",
-        "can you explain"
+        "can you explain",
+        "i don't know how"
     ]
+
 
     return any(
         phrase in message
@@ -208,9 +320,14 @@ def is_not_understood(message):
     )
 
 
+# =========================================================
+# CHECK IF USER COMPLETED THE STEP
+# =========================================================
+
 def is_completed(message):
 
     message = message.lower().strip()
+
 
     phrases = [
         "done",
@@ -220,8 +337,10 @@ def is_completed(message):
         "resolved",
         "yes",
         "it works",
-        "working"
+        "working",
+        "solved"
     ]
+
 
     return any(
         phrase in message
@@ -233,23 +352,45 @@ def is_completed(message):
 # INTERACTIVE TROUBLESHOOTING
 # =========================================================
 
-def start_troubleshooting(issue):
+def start_troubleshooting(user_issue):
 
-    steps = get_troubleshooting_steps(issue)
 
-    if len(steps) == 0:
+    # -----------------------------------------------------
+    # FIND BEST MATCH
+    # -----------------------------------------------------
+
+    steps, matched_issue = get_troubleshooting_steps(
+        user_issue
+    )
+
+
+    # -----------------------------------------------------
+    # ISSUE NOT FOUND
+    # -----------------------------------------------------
+
+    if steps is None:
 
         print(
-            "\n🤖 Sorry, I could not find a troubleshooting guide "
-            "for this issue."
+            "\n🤖 Sorry, I could not find a suitable "
+            "troubleshooting guide for this issue."
+        )
+
+        print(
+            "\nPlease provide a little more detail "
+            "about the problem."
         )
 
         return
 
 
+    # -----------------------------------------------------
+    # START CHATBOT
+    # -----------------------------------------------------
+
     print(
         "\n🤖 AI Helpdesk Assistant"
     )
+
 
     print(
         "\nI will guide you step-by-step."
@@ -257,10 +398,11 @@ def start_troubleshooting(issue):
 
 
     # -----------------------------------------------------
-    # GO THROUGH EACH STEP
+    # GO THROUGH EACH TROUBLESHOOTING STEP
     # -----------------------------------------------------
 
     for index in range(len(steps)):
+
 
         step = steps.iloc[index]
 
@@ -271,11 +413,13 @@ def start_troubleshooting(issue):
         )
 
 
-        # Number of times additional guidance was given
-        additional_help = 0
+        # Tracks whether additional guidance
+        # has already been given
+        additional_help = False
 
 
         while True:
+
 
             user_message = input(
                 "\nYour response: "
@@ -285,77 +429,103 @@ def start_troubleshooting(issue):
             message = user_message.lower().strip()
 
 
-            # -------------------------------------------------
+            # =================================================
             # USER SAYS NOT WORKING
-            # -------------------------------------------------
+            # =================================================
 
             if is_not_working(message):
 
-                if additional_help == 0:
 
-                    print("\n🤖 AI:")
+                if not additional_help:
+
+
+                    print(
+                        "\n🤖 AI:"
+                    )
+
 
                     print(
                         "No problem. Let's troubleshoot it further. 🔧\n\n"
-                        + step["If_Not_Working"]
+                        + str(step["If_Not_Working"])
                     )
 
-                    additional_help += 1
+
+                    additional_help = True
+
 
                     continue
 
 
                 else:
 
-                    print("\n🤖 AI:")
+
+                    print(
+                        "\n🤖 AI:"
+                    )
+
 
                     print(
                         "Okay. This step did not resolve the issue. "
                         "Let's move to the next troubleshooting step."
                     )
 
+
                     break
 
 
-            # -------------------------------------------------
+            # =================================================
             # USER DOES NOT UNDERSTAND
-            # -------------------------------------------------
+            # =================================================
 
             elif is_not_understood(message):
 
-                print("\n🤖 AI:")
+
+                print(
+                    "\n🤖 AI:"
+                )
+
 
                 print(
                     "No problem 😊\n\n"
                     "Let me explain this step:\n\n"
-                    + step["If_Dont_Understand"]
+                    + str(step["If_Dont_Understand"])
                 )
+
 
                 continue
 
 
-            # -------------------------------------------------
+            # =================================================
             # USER COMPLETED THE STEP
-            # -------------------------------------------------
+            # =================================================
 
             elif is_completed(message):
 
-                print("\n🤖 AI:")
+
+                print(
+                    "\n🤖 AI:"
+                )
+
 
                 print(
                     "Great! ✅ This step is completed."
                 )
 
+
                 break
 
 
-            # -------------------------------------------------
+            # =================================================
             # UNKNOWN RESPONSE
-            # -------------------------------------------------
+            # =================================================
 
             else:
 
-                print("\n🤖 AI:")
+
+                print(
+                    "\n🤖 AI:"
+                )
+
 
                 print(
                     "I understand. Please tell me if the "
@@ -364,21 +534,25 @@ def start_troubleshooting(issue):
                 )
 
 
-    # =====================================================
+    # =========================================================
     # FINAL SUPPORT MESSAGE
-    # =====================================================
+    # =========================================================
 
-    support_team = get_support_team(issue)
+    support_team = get_support_team(
+        matched_issue
+    )
 
 
     print(
         "\n🆘 All troubleshooting steps have been completed."
     )
 
+
     print(
         "\nThe issue could not be resolved using "
         "the available troubleshooting steps."
     )
+
 
     print(
         f"\nPlease contact the {support_team} "
@@ -395,4 +569,6 @@ issue = input(
 )
 
 
-start_troubleshooting(issue)
+start_troubleshooting(
+    issue
+)
