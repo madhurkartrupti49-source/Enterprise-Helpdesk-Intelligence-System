@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
 
 
 # =========================================================
@@ -36,7 +37,14 @@ knowledge_base["Search_Text"] = (
     + knowledge_base["Steps"].fillna("")
     + " "
     + knowledge_base["Resolution"].fillna("")
+    + " "
+    + knowledge_base["Support_Team"].fillna("")
 )
+
+
+# =========================================================
+# TF-IDF KNOWLEDGE BASE
+# =========================================================
 
 knowledge_vectorizer = TfidfVectorizer(
     lowercase=True,
@@ -46,6 +54,31 @@ knowledge_vectorizer = TfidfVectorizer(
 knowledge_vectors = knowledge_vectorizer.fit_transform(
     knowledge_base["Search_Text"]
 )
+
+
+# =========================================================
+# SEMANTIC NLP MODEL
+# =========================================================
+
+print("\n🤖 Loading AI language model...")
+
+semantic_model = SentenceTransformer(
+    "all-MiniLM-L6-v2"
+)
+
+knowledge_questions = (
+    knowledge_base["Question"]
+    .fillna("")
+    .astype(str)
+    .tolist()
+)
+
+knowledge_embeddings = semantic_model.encode(
+    knowledge_questions,
+    convert_to_tensor=True
+)
+
+print("✅ AI language model loaded.")
 
 
 # =========================================================
@@ -79,6 +112,7 @@ def find_troubleshooting_issue(user_question):
 
     question = clean_text(user_question)
 
+
     # -----------------------------------------------------
     # OUTLOOK
     # -----------------------------------------------------
@@ -88,6 +122,7 @@ def find_troubleshooting_issue(user_question):
         if any(phrase in question for phrase in [
             "not working",
             "not opening",
+            "not responding",
             "doesn't open",
             "doesnt open",
             "cannot open",
@@ -99,8 +134,11 @@ def find_troubleshooting_issue(user_question):
             "not launching",
             "cannot access",
             "can't access",
-            "cant access"
+            "cant access",
+            "stuck",
+            "frozen"
         ]):
+
             return "Outlook is not opening"
 
 
@@ -118,17 +156,24 @@ def find_troubleshooting_issue(user_question):
             "cant connect",
             "connection problem",
             "connection issue",
-            "unable to connect"
+            "unable to connect",
+            "connection failed",
+            "keeps failing",
+            "cannot access"
         ]):
+
             return "VPN is not connecting"
 
 
     # -----------------------------------------------------
     # EMAIL RECEIVING
-    # IMPORTANT: CHECK BEFORE EMAIL SENDING
     # -----------------------------------------------------
 
-    if "email" in question or "emails" in question or "mail" in question:
+    if (
+        "email" in question
+        or "emails" in question
+        or "mail" in question
+    ):
 
         if any(phrase in question for phrase in [
             "not receiving",
@@ -143,8 +188,11 @@ def find_troubleshooting_issue(user_question):
             "emails are not coming",
             "emails not coming",
             "mail not coming",
-            "mails not coming"
+            "mails not coming",
+            "not getting emails",
+            "not getting mails"
         ]):
+
             return "Emails are not receiving"
 
 
@@ -152,7 +200,11 @@ def find_troubleshooting_issue(user_question):
     # EMAIL SENDING
     # -----------------------------------------------------
 
-    if "email" in question or "emails" in question or "mail" in question:
+    if (
+        "email" in question
+        or "emails" in question
+        or "mail" in question
+    ):
 
         if any(phrase in question for phrase in [
             "not sending",
@@ -162,8 +214,12 @@ def find_troubleshooting_issue(user_question):
             "cant send",
             "unable to send",
             "email won't send",
-            "email wont send"
+            "email wont send",
+            "emails won't send",
+            "emails wont send",
+            "cannot email"
         ]):
+
             return "Emails are not sending"
 
 
@@ -171,15 +227,21 @@ def find_troubleshooting_issue(user_question):
     # EMAIL SYNC
     # -----------------------------------------------------
 
-    if "email" in question or "emails" in question or "mail" in question:
+    if (
+        "email" in question
+        or "emails" in question
+        or "mail" in question
+    ):
 
         if any(phrase in question for phrase in [
             "not syncing",
             "not sync",
             "sync problem",
             "sync issue",
-            "synchronization problem"
+            "synchronization problem",
+            "synchronization issue"
         ]):
+
             return "Email client is not syncing"
 
 
@@ -187,7 +249,11 @@ def find_troubleshooting_issue(user_question):
     # GENERAL EMAIL
     # -----------------------------------------------------
 
-    if "email" in question or "emails" in question or "mail" in question:
+    if (
+        "email" in question
+        or "emails" in question
+        or "mail" in question
+    ):
 
         if any(phrase in question for phrase in [
             "not working",
@@ -199,7 +265,13 @@ def find_troubleshooting_issue(user_question):
             "unable to access",
             "not accessible"
         ]):
+
             return "Email is not working"
+        # -----------------------------------------------------
+    # NO MATCH
+    # -----------------------------------------------------
+
+    return None
 
 
     # -----------------------------------------------------
@@ -216,6 +288,7 @@ def find_troubleshooting_issue(user_question):
     )
 
     best_index = similarity.argmax()
+
     best_score = similarity[0][best_index]
 
     if best_score < 0.15:
@@ -244,35 +317,64 @@ def get_steps(issue):
 
 # =========================================================
 # FIND KNOWLEDGE BASE ANSWER
-# =========================================================
-
-# =========================================================
-# FIND KNOWLEDGE BASE ANSWER
+# SEMANTIC NLP + KEYWORD MATCHING
 # =========================================================
 
 def find_knowledge_answer(question):
 
     question = clean_text(question)
 
+
     # -----------------------------------------------------
-    # DIRECT KEYWORD MATCHING
+    # IMPORTANT HELP DESK TERMS
     # -----------------------------------------------------
 
     keyword_matches = {
-        "sla": ["sla", "service level agreement"],
-        "mttr": ["mttr", "mean time to resolution"],
-        "escalation": ["escalation", "escalate"],
-        "helpdesk": ["helpdesk", "help desk"],
-        "incident": ["incident"],
+
+        "sla": [
+            "sla",
+            "service level agreement",
+            "service level"
+        ],
+
+        "mttr": [
+            "mttr",
+            "mean time to resolution",
+            "resolution time"
+        ],
+
+        "escalation": [
+            "escalation",
+            "escalate",
+            "escalated"
+        ],
+
+        "helpdesk": [
+            "helpdesk",
+            "help desk"
+        ],
+
+        "incident": [
+            "incident",
+            "it incident"
+        ],
+
         "service request": [
             "service request",
             "service requests"
         ],
+
         "ticket": [
             "ticket",
-            "support ticket"
+            "support ticket",
+            "it ticket"
         ]
     }
+
+
+    # -----------------------------------------------------
+    # DIRECT KEYWORD SEARCH
+    # -----------------------------------------------------
 
     for topic, keywords in keyword_matches.items():
 
@@ -281,7 +383,6 @@ def find_knowledge_answer(question):
             for keyword in keywords
         ):
 
-            # Search topic in Knowledge Base
             topic_text = (
                 knowledge_base["Search_Text"]
                 .fillna("")
@@ -297,38 +398,39 @@ def find_knowledge_answer(question):
             ]
 
             if len(matches) > 0:
-
                 return matches.iloc[0]
 
 
     # -----------------------------------------------------
-    # TF-IDF FALLBACK
+    # SEMANTIC SIMILARITY
     # -----------------------------------------------------
 
-    user_vector = knowledge_vectorizer.transform(
-        [question]
+    user_embedding = semantic_model.encode(
+        question,
+        convert_to_tensor=True
     )
 
-    similarity = cosine_similarity(
-        user_vector,
-        knowledge_vectors
-    )
 
-    best_index = similarity.argmax()
+    similarity_scores = cosine_similarity(
+        user_embedding.cpu().numpy().reshape(1, -1),
+        knowledge_embeddings.cpu().numpy()
+    )[0]
 
-    best_score = similarity[0][best_index]
 
-    # Slightly lower threshold
-    if best_score < 0.05:
+    best_index = similarity_scores.argmax()
 
+    best_score = similarity_scores[best_index]
+
+
+    
+    if best_score < 0.45:
         return None
+
 
     return knowledge_base.iloc[best_index]
 
 
-# =========================================================
-# NOT WORKING
-# =========================================================
+
 
 def is_not_working(message):
 
@@ -862,10 +964,6 @@ while True:
 
     if last_session_completed:
 
-        # -------------------------------------------------
-        # Customer says OK / Thanks / Solved
-        # -------------------------------------------------
-
         if is_session_finished_response(message):
 
             print(
@@ -881,9 +979,6 @@ while True:
 
             continue
 
-        # -------------------------------------------------
-        # Customer asks a NEW question
-        # -------------------------------------------------
 
         last_session_completed = False
         waiting_for_new_question = False
@@ -948,7 +1043,15 @@ while True:
         )
 
         print(
-            "\n🔧 Recommended Solution:"
+            "\n🔧 Recommended Troubleshooting Steps:"
+        )
+
+        print(
+            result["Steps"]
+        )
+
+        print(
+            "\n✅ Resolution:"
         )
 
         print(

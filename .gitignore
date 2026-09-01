@@ -1,2 +1,26 @@
-Data/*helpdesk_tickets.csv
-Database/*.csv
+# Python
+__pycache__/
+*.py[cod]
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*_backup.py
+* backup.py
+app copy.py
+
+# Environment
+.env
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+Data/helpdesk_tickets.csv

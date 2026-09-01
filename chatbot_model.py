@@ -6,75 +6,420 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 # =========================================================
-# LOAD KNOWLEDGE BASE
+# LOAD PRE-BUILT KNOWLEDGE BASE MODEL
 # =========================================================
 
-df = pd.read_csv(
-    "Knowledge_Base/knowledge_base.csv"
-)
-
-
-# Combine question and category
-df["Search_Text"] = (
-    df["Question"].fillna("")
-    + " "
-    + df["Category"].fillna("")
-)
-
-
-# =========================================================
-# CREATE MAIN CHATBOT TF-IDF MODEL
-# =========================================================
-
-vectorizer = TfidfVectorizer(
-    lowercase=True,
-    stop_words="english"
-)
-
-
-knowledge_vectors = vectorizer.fit_transform(
-    df["Search_Text"]
-)
-
-
-# Save chatbot model
-joblib.dump(
-    vectorizer,
+vectorizer = joblib.load(
     "Models/chatbot_vectorizer.pkl"
 )
 
-joblib.dump(
-    knowledge_vectors,
+knowledge_vectors = joblib.load(
     "Models/chatbot_vectors.pkl"
 )
 
-joblib.dump(
-    df,
+df = joblib.load(
     "Models/chatbot_knowledge.pkl"
 )
 
+print(
+    "\n📚 Knowledge Base Articles:",
+    len(df)
+)
 
-print("Chatbot Knowledge Base Loaded Successfully!")
-print("Total Knowledge Articles:", len(df))
-print("Chatbot Model Created Successfully!")
+print(
+    "✅ Chatbot Knowledge Base Loaded Successfully!"
+)
 
 
 # =========================================================
-# CHATBOT RESPONSE
+# CLEAN TEXT
+# =========================================================
+
+def clean_text(text):
+
+    return str(text).lower().strip()
+
+
+# =========================================================
+# MAIN CHATBOT RESPONSE
 # =========================================================
 
 def chatbot_response(user_question):
 
-    user_question = user_question.lower().strip()
+    question = clean_text(user_question)
+
+
+    # =====================================================
+    # SECURITY PRIORITY
+    # =====================================================
+
+    security_keywords = [
+
+        "hacked",
+        "hack",
+        "hacker",
+        "compromised",
+        "account compromised",
+        "someone hacked",
+        "someone accessed",
+        "someone access",
+        "unauthorized access",
+        "suspicious activity",
+        "suspicious login",
+        "unknown login",
+        "unknown device",
+        "security issue",
+        "security problem",
+        "account breach",
+        "account breached",
+        "cyber attack",
+        "cyberattack"
+
+    ]
+
+
+    if any(
+        keyword in question
+        for keyword in security_keywords
+    ):
+
+        security_matches = df[
+            (
+                df["Question"]
+                .astype(str)
+                .str.lower()
+                .str.contains(
+                    "compromised|hacked|security|breach",
+                    regex=True,
+                    na=False
+                )
+            )
+            |
+            (
+                df["Category"]
+                .astype(str)
+                .str.lower()
+                .str.contains(
+                    "security",
+                    regex=False,
+                    na=False
+                )
+            )
+        ]
+
+
+        if len(security_matches) > 0:
+
+            result = security_matches.iloc[0]
+
+            return {
+
+                "found": True,
+
+                "question": result["Question"],
+
+                "category": result["Category"],
+
+                "steps": result["Steps"],
+
+                "resolution": result["Resolution"],
+
+                "support_team": result["Support_Team"]
+
+            }
+
+
+    # =====================================================
+    # PASSWORD PRIORITY
+    # =====================================================
+
+    password_keywords = [
+
+        "forgot password",
+        "forgot my password",
+        "forgot login password",
+        "can't remember password",
+        "cannot remember password",
+        "dont remember password",
+        "don't remember password",
+        "password forgotten",
+        "lost password",
+        "reset password",
+        "password reset"
+
+    ]
+
+
+    if any(
+        keyword in question
+        for keyword in password_keywords
+    ):
+
+        password_matches = df[
+
+            df["Question"]
+            .astype(str)
+            .str.lower()
+            .str.contains(
+                "password",
+                regex=False,
+                na=False
+            )
+
+        ]
+
+
+        if len(password_matches) > 0:
+
+            result = password_matches.iloc[0]
+
+            return {
+
+                "found": True,
+
+                "question": result["Question"],
+
+                "category": result["Category"],
+
+                "steps": result["Steps"],
+
+                "resolution": result["Resolution"],
+
+                "support_team": result["Support_Team"]
+
+            }
+
+
+    # =====================================================
+    # OUTLOOK PRIORITY
+    # =====================================================
+
+    if "outlook" in question:
+
+        outlook_matches = df[
+
+            df["Question"]
+            .astype(str)
+            .str.lower()
+            .str.contains(
+                "outlook",
+                regex=False,
+                na=False
+            )
+
+        ]
+
+
+        if len(outlook_matches) > 0:
+
+            result = outlook_matches.iloc[0]
+
+            return {
+
+                "found": True,
+
+                "question": result["Question"],
+
+                "category": result["Category"],
+
+                "steps": result["Steps"],
+
+                "resolution": result["Resolution"],
+
+                "support_team": result["Support_Team"]
+
+            }
+
+
+    # =====================================================
+    # VPN PRIORITY
+    # =====================================================
+
+    if "vpn" in question:
+
+        vpn_matches = df[
+
+            df["Question"]
+            .astype(str)
+            .str.lower()
+            .str.contains(
+                "vpn",
+                regex=False,
+                na=False
+            )
+
+        ]
+
+
+        if len(vpn_matches) > 0:
+
+            result = vpn_matches.iloc[0]
+
+            return {
+
+                "found": True,
+
+                "question": result["Question"],
+
+                "category": result["Category"],
+
+                "steps": result["Steps"],
+
+                "resolution": result["Resolution"],
+
+                "support_team": result["Support_Team"]
+
+            }
+
+
+    # =====================================================
+    # EMAIL RECEIVING
+    # =====================================================
+
+    email_receive_keywords = [
+
+        "email not coming",
+        "emails not coming",
+        "mail not coming",
+        "mails not coming",
+
+        "email not receiving",
+        "emails not receiving",
+        "mail not receiving",
+        "mails not receiving",
+
+        "not getting emails",
+        "not getting email",
+        "not getting mails",
+        "not getting mail",
+
+        "email is not coming",
+        "emails are not coming",
+
+        "emails are not arriving",
+        "email is not arriving",
+        "email not arriving",
+        "emails not arriving",
+
+        "not receiving emails",
+        "not receiving email"
+
+    ]
+
+
+    if any(
+        keyword in question
+        for keyword in email_receive_keywords
+    ):
+
+        email_matches = df[
+
+            df["Question"]
+            .astype(str)
+            .str.lower()
+            .str.contains(
+                "receiving|receiv|coming|arriving",
+                regex=True,
+                na=False
+            )
+
+        ]
+
+
+        if len(email_matches) > 0:
+
+            result = email_matches.iloc[0]
+
+            return {
+
+                "found": True,
+
+                "question": result["Question"],
+
+                "category": result["Category"],
+
+                "steps": result["Steps"],
+
+                "resolution": result["Resolution"],
+
+                "support_team": result["Support_Team"]
+
+            }
+
+
+    # =====================================================
+    # LAPTOP SLOW
+    # =====================================================
+
+    laptop_keywords = [
+
+        "laptop is slow",
+        "laptop running slow",
+        "laptop running very slow",
+        "computer is slow",
+        "computer running slow",
+        "pc is slow",
+        "system is slow",
+        "laptop very slow",
+        "my laptop is running slow"
+
+    ]
+
+
+    if any(
+        keyword in question
+        for keyword in laptop_keywords
+    ):
+
+        hardware_matches = df[
+
+            df["Category"]
+            .astype(str)
+            .str.lower()
+            .str.contains(
+                "hardware",
+                regex=False,
+                na=False
+            )
+
+        ]
+
+
+        if len(hardware_matches) > 0:
+
+            result = hardware_matches.iloc[0]
+
+            return {
+
+                "found": True,
+
+                "question": result["Question"],
+
+                "category": result["Category"],
+
+                "steps": result["Steps"],
+
+                "resolution": result["Resolution"],
+
+                "support_team": result["Support_Team"]
+
+            }
+
+
+    # =====================================================
+    # TF-IDF SEMANTIC FALLBACK
+    # =====================================================
 
     user_vector = vectorizer.transform(
-        [user_question]
+        [question]
     )
+
 
     similarity = cosine_similarity(
         user_vector,
         knowledge_vectors
     )
+
 
     best_match = similarity.argmax()
 
@@ -84,11 +429,14 @@ def chatbot_response(user_question):
     if best_score < 0.15:
 
         return {
+
             "found": False,
+
             "message": (
                 "Sorry, I could not understand the issue clearly. "
-                "Please provide more details or contact the Helpdesk Support Team."
+                "Please provide more details about the IT issue."
             )
+
         }
 
 
@@ -96,17 +444,24 @@ def chatbot_response(user_question):
 
 
     return {
+
         "found": True,
+
         "question": result["Question"],
+
         "category": result["Category"],
+
         "steps": result["Steps"],
+
         "resolution": result["Resolution"],
+
         "support_team": result["Support_Team"]
+
     }
 
 
 # =========================================================
-# LOAD TROUBLESHOOTING KNOWLEDGE
+# LOAD TROUBLESHOOTING DATA
 # =========================================================
 
 troubleshooting_df = pd.read_csv(
@@ -114,461 +469,271 @@ troubleshooting_df = pd.read_csv(
 )
 
 
-# =========================================================
-# CREATE TROUBLESHOOTING ISSUE MODEL
-# =========================================================
-
-troubleshooting_issues = (
+troubleshooting_df["Issue"] = (
     troubleshooting_df["Issue"]
-    .dropna()
-    .drop_duplicates()
-    .reset_index(drop=True)
+    .fillna("")
 )
 
 
-troubleshooting_vectorizer = TfidfVectorizer(
-    lowercase=True,
-    stop_words="english"
+troubleshooting_df["Step"] = (
+    troubleshooting_df["Step"]
+    .fillna("")
 )
 
 
-troubleshooting_vectors = (
-    troubleshooting_vectorizer.fit_transform(
-        troubleshooting_issues
-    )
+troubleshooting_df["If_Not_Working"] = (
+    troubleshooting_df["If_Not_Working"]
+    .fillna("")
 )
 
+
+troubleshooting_df["If_Dont_Understand"] = (
+    troubleshooting_df["If_Dont_Understand"]
+    .fillna("")
+)
+
+
+print(
+    "🧠 Troubleshooting Knowledge Loaded."
+)
+# =========================================================
+# TROUBLESHOOTING RESPONSE
+# =========================================================
 
 # =========================================================
-# FIND BEST TROUBLESHOOTING ISSUE
+# TROUBLESHOOTING RESPONSE
 # =========================================================
 
 def get_troubleshooting_steps(user_issue):
 
-    user_issue = user_issue.lower().strip()
-
-
-    # -----------------------------------------------------
-    # FIRST: EXACT MATCH
-    # -----------------------------------------------------
-
-    exact_match = troubleshooting_df[
-        troubleshooting_df["Issue"]
-        .str.lower()
-        .str.strip()
-        == user_issue
-    ]
-
-
-    if len(exact_match) > 0:
-
-        return (
-            exact_match.reset_index(drop=True),
-            exact_match.iloc[0]["Issue"]
-        )
-
-
-    # -----------------------------------------------------
-    # SECOND: AI / TF-IDF SIMILARITY MATCH
-    # -----------------------------------------------------
-
-    user_vector = troubleshooting_vectorizer.transform(
-        [user_issue]
-    )
-
-
-    similarity = cosine_similarity(
-        user_vector,
-        troubleshooting_vectors
-    )
-
-
-    best_match_index = similarity.argmax()
-
-    best_score = similarity[0][best_match_index]
-
-
-    matched_issue = troubleshooting_issues.iloc[
-        best_match_index
-    ]
-
-
-    # -----------------------------------------------------
-    # MINIMUM SIMILARITY
-    # -----------------------------------------------------
-
-    if best_score < 0.15:
-
-        return None, None
-
-
-    # Get all steps for matched issue
-    issue_data = troubleshooting_df[
-        troubleshooting_df["Issue"]
-        .str.lower()
-        .str.strip()
-        == matched_issue.lower().strip()
-    ]
-
-
-    return (
-        issue_data.reset_index(drop=True),
-        matched_issue
-    )
-
-
-# =========================================================
-# FIND SUPPORT TEAM
-# =========================================================
-
-def get_support_team(issue):
-
-    issue = issue.lower().strip()
-
-
-    # Exact match in knowledge base
-    result = df[
-        df["Question"]
-        .str.lower()
-        .str.strip()
-        == issue
-    ]
-
-
-    if len(result) > 0:
-
-        return result.iloc[0]["Support_Team"]
-
-
-    # -----------------------------------------------------
-    # Try AI matching if exact match is not available
-    # -----------------------------------------------------
-
-    result = chatbot_response(issue)
-
-
-    if result["found"]:
-
-        return result["support_team"]
-
-
-    return "Helpdesk Support Team"
-
-
-# =========================================================
-# CHECK IF USER SAYS ISSUE IS NOT WORKING
-# =========================================================
-
-def is_not_working(message):
-
-    message = message.lower().strip()
-
-
-    not_working_phrases = [
-        "still not working",
-        "stil not working",
-        "still not woking",
-        "not working",
-        "doesn't work",
-        "doesnt work",
-        "not fixed",
-        "not solve",
-        "not solved",
-        "issue remains",
-        "no change",
-        "problem remains",
-        "not resolved",
-        "no",
-        "remains problem",
-        "problem still exists",
-        "issue still exists",
-        "still having problem",
-        "still facing issue",
-    ]
-
-
-    return any(
-        phrase in message
-        for phrase in not_working_phrases
-    )
-
-
-# =========================================================
-# CHECK IF USER DOES NOT UNDERSTAND
-# =========================================================
-
-def is_not_understood(message):
-
-    message = message.lower().strip()
-
-
-    phrases = [
-        "don't understand",
-        "dont understand",
-        "not understand",
-        "how",
-        "what does this mean",
-        "explain",
-        "can you explain",
-        "i don't know how"
-    ]
-
-
-    return any(
-        phrase in message
-        for phrase in phrases
-    )
-
-
-# =========================================================
-# CHECK IF USER COMPLETED THE STEP
-# =========================================================
-
-def is_completed(message):
-
-    message = message.lower().strip()
-
-
-    phrases = [
-        "done",
-        "working now",
-        "worked",
-        "fixed",
-        "resolved",
-        "yes",
-        "it works",
-        "working",
-        "solved"
-    ]
-
-
-    return any(
-        phrase in message
-        for phrase in phrases
-    )
-
-
-# =========================================================
-# INTERACTIVE TROUBLESHOOTING
-# =========================================================
-
-def start_troubleshooting(user_issue):
-
-
-    # -----------------------------------------------------
-    # FIND BEST MATCH
-    # -----------------------------------------------------
-
-    steps, matched_issue = get_troubleshooting_steps(
-        user_issue
-    )
-
-
-    # -----------------------------------------------------
-    # ISSUE NOT FOUND
-    # -----------------------------------------------------
-
-    if steps is None:
-
-        print(
-            "\n🤖 Sorry, I could not find a suitable "
-            "troubleshooting guide for this issue."
-        )
-
-        print(
-            "\nPlease provide a little more detail "
-            "about the problem."
-        )
-
-        return
-
-
-    # -----------------------------------------------------
-    # START CHATBOT
-    # -----------------------------------------------------
-
-    print(
-        "\n🤖 AI Helpdesk Assistant"
-    )
-
-
-    print(
-        "\nI will guide you step-by-step."
-    )
-
-
-    # -----------------------------------------------------
-    # GO THROUGH EACH TROUBLESHOOTING STEP
-    # -----------------------------------------------------
-
-    for index in range(len(steps)):
-
-
-        step = steps.iloc[index]
-
-
-        print(
-            f"\n🔹 Step {index + 1}: "
-            f"{step['Step']}"
-        )
-
-
-        # Tracks whether additional guidance
-        # has already been given
-        additional_help = False
-
-
-        while True:
-
-
-            user_message = input(
-                "\nYour response: "
-            )
-
-
-            message = user_message.lower().strip()
-
-
-            # =================================================
-            # USER SAYS NOT WORKING
-            # =================================================
-
-            if is_not_working(message):
-
-
-                if not additional_help:
-
-
-                    print(
-                        "\n🤖 AI:"
-                    )
-
-
-                    print(
-                        "No problem. Let's troubleshoot it further. 🔧\n\n"
-                        + str(step["If_Not_Working"])
-                    )
-
-
-                    additional_help = True
-
-
-                    continue
-
-
-                else:
-
-
-                    print(
-                        "\n🤖 AI:"
-                    )
-
-
-                    print(
-                        "Okay. This step did not resolve the issue. "
-                        "Let's move to the next troubleshooting step."
-                    )
-
-
-                    break
-
-
-            # =================================================
-            # USER DOES NOT UNDERSTAND
-            # =================================================
-
-            elif is_not_understood(message):
-
-
-                print(
-                    "\n🤖 AI:"
-                )
-
-
-                print(
-                    "No problem 😊\n\n"
-                    "Let me explain this step:\n\n"
-                    + str(step["If_Dont_Understand"])
-                )
-
-
-                continue
-
-
-            # =================================================
-            # USER COMPLETED THE STEP
-            # =================================================
-
-            elif is_completed(message):
-
-
-                print(
-                    "\n🤖 AI:"
-                )
-
-
-                print(
-                    "Great! ✅ This step is completed."
-                )
-
-
-                break
-
-
-            # =================================================
-            # UNKNOWN RESPONSE
-            # =================================================
-
-            else:
-
-
-                print(
-                    "\n🤖 AI:"
-                )
-
-
-                print(
-                    "I understand. Please tell me if the "
-                    "step worked, is still not working, "
-                    "or you need an explanation."
-                )
-
-
-    # =========================================================
-    # FINAL SUPPORT MESSAGE
-    # =========================================================
-
-    support_team = get_support_team(
-        matched_issue
-    )
-
-
-    print(
-        "\n🆘 All troubleshooting steps have been completed."
-    )
-
-
-    print(
-        "\nThe issue could not be resolved using "
-        "the available troubleshooting steps."
-    )
-
-
-    print(
-        f"\nPlease contact the {support_team} "
-        "for further assistance."
-    )
-
-
-# =========================================================
-# START CHATBOT
-# =========================================================
-
-issue = input(
-    "\nEnter your issue: "
-)
-
-
-start_troubleshooting(
-    issue
-)
+    question = clean_text(user_issue)
+
+    # =====================================================
+    # OUTLOOK
+    # =====================================================
+
+    if "outlook" in question:
+
+        return {
+            "found": True,
+            "question": user_issue,
+            "category": "Software",
+
+            "steps": [
+                "Check your internet connection.",
+                "Restart Outlook and try again.",
+                "Refresh your Outlook mailbox.",
+                "Check your Outlook account settings.",
+                "Restart the computer and try again."
+            ],
+
+            "resolution": (
+                "If the Outlook issue continues after these steps, "
+                "the issue should be escalated to Application Support."
+            ),
+
+            "support_team": "Application Support"
+        }
+
+
+    # =====================================================
+    # VPN
+    # =====================================================
+
+    if "vpn" in question:
+
+        return {
+            "found": True,
+            "question": user_issue,
+            "category": "Network",
+
+            "steps": [
+                "Check your internet connection.",
+                "Disconnect and reconnect the VPN.",
+                "Restart the VPN application.",
+                "Check your VPN credentials.",
+                "Restart the computer and try again."
+            ],
+
+            "resolution": (
+                "If the VPN issue continues, "
+                "the ticket should be escalated to Network Team."
+            ),
+
+            "support_team": "Network Team"
+        }
+
+
+    # =====================================================
+    # EMAIL
+    # =====================================================
+
+    if any(
+        word in question
+        for word in [
+            "email",
+            "mail",
+            "mailbox",
+            "gmail"
+        ]
+    ):
+
+        return {
+            "found": True,
+            "question": user_issue,
+            "category": "Software",
+
+            "steps": [
+                "Check your internet connection.",
+                "Refresh your email inbox and try again.",
+                "Check whether your email account is connected properly.",
+                "Try opening your email account again.",
+                "Restart the computer and try again."
+            ],
+
+            "resolution": (
+                "If the email issue continues after these steps, "
+                "the issue should be escalated to Application Support."
+            ),
+
+            "support_team": "Application Support"
+        }
+
+
+    # =====================================================
+    # PASSWORD
+    # =====================================================
+
+    if any(
+        word in question
+        for word in [
+            "password",
+            "forgot password",
+            "login password",
+            "reset password"
+        ]
+    ):
+
+        return {
+            "found": True,
+            "question": user_issue,
+            "category": "Access",
+
+            "steps": [
+                "Check that you are entering the correct username.",
+                "Try entering the password again carefully.",
+                "Use the password reset option.",
+                "Check whether your account is locked.",
+                "Try logging in again."
+            ],
+
+            "resolution": (
+                "If the login issue continues, "
+                "the ticket should be escalated to IT Helpdesk."
+            ),
+
+            "support_team": "Helpdesk Support Team"
+        }
+
+
+    # =====================================================
+    # SECURITY
+    # =====================================================
+
+    if any(
+        word in question
+        for word in [
+            "hacked",
+            "hack",
+            "compromised",
+            "suspicious",
+            "security",
+            "breach",
+            "unauthorized",
+            "malware",
+            "phishing"
+        ]
+    ):
+
+        return {
+            "found": True,
+            "question": user_issue,
+            "category": "Security",
+
+            "steps": [
+                "Disconnect the affected device from the network.",
+                "Do not open suspicious links or attachments.",
+                "Change your account password if possible.",
+                "Run the approved antivirus/security scan.",
+                "Report the incident to the Security Team."
+            ],
+
+            "resolution": (
+                "The issue should be escalated to the Security Team "
+                "for further investigation."
+            ),
+
+            "support_team": "Security Team"
+        }
+
+
+    # =====================================================
+    # LAPTOP / COMPUTER SLOW
+    # =====================================================
+
+    if any(
+        phrase in question
+        for phrase in [
+            "laptop is slow",
+            "laptop running slow",
+            "laptop running very slow",
+            "computer is slow",
+            "computer running slow",
+            "pc is slow",
+            "system is slow",
+            "laptop very slow",
+            "my laptop is running slow"
+        ]
+    ):
+
+        return {
+            "found": True,
+            "question": user_issue,
+            "category": "Hardware",
+
+            "steps": [
+                "Close unnecessary applications.",
+                "Check available storage space.",
+                "Restart the computer.",
+                "Check whether background applications are consuming resources.",
+                "Try using the computer again."
+            ],
+
+            "resolution": (
+                "If the performance issue continues, "
+                "the ticket should be escalated to Desktop Support."
+            ),
+
+            "support_team": "Desktop Support"
+        }
+
+
+    # =====================================================
+    # UNKNOWN ISSUE
+    # =====================================================
+
+    return {
+        "found": False,
+        "question": user_issue,
+        "category": "Unknown",
+
+        "steps": [
+            "Please describe your IT issue in more detail."
+        ],
+
+        "resolution": (
+            "IT Helpdesk will investigate the issue."
+        ),
+
+        "support_team": "IT Helpdesk"
+    }

@@ -1,31 +1,91 @@
 Issue,Step,If_Not_Working,If_Dont_Understand
-VPN is not connecting,Check your internet connection.,Make sure Wi-Fi or Ethernet is connected and try opening a website.,Open Chrome and try visiting any website. If a website opens your internet is working.
-VPN is not connecting,Verify your VPN username and password.,Make sure you are using the correct company username and password.,Enter your company username and password in the VPN login screen and try connecting.
-VPN is not connecting,Restart the VPN application.,Close the VPN application completely and open it again.,Close the VPN application wait a few seconds and then open it again.
-VPN is not connecting,Check your VPN connection settings.,Make sure the correct company VPN server or profile is selected.,Open the VPN settings and check that the correct company VPN profile or server is selected.
-VPN is not connecting,Try connecting to the VPN again.,Try connecting again after checking the previous settings.,Open the VPN application and click Connect to try the connection again.
-Emails are not receiving,Check your internet connection.,Make sure Wi-Fi or Ethernet is connected and try opening a website.,Open Chrome and try visiting any website. If a website opens your internet is working.
-Emails are not receiving,Refresh your email mailbox.,Refresh or reload your mailbox and check for new emails.,Click the refresh or reload option in your email application or email website.
-Emails are not receiving,Check the Junk or Spam folder.,Check the Junk or Spam folder for the missing email.,Open the Junk or Spam folder and look for the email you are expecting.
-Emails are not receiving,Check your mailbox storage.,If your mailbox is full remove unnecessary emails according to your organization's policy.,Check the mailbox storage information and see whether the mailbox is full.
-Emails are not receiving,Check the email account connection.,Make sure your email account is connected and signed in correctly.,Open your email account settings and check that the account is connected and signed in.
-Emails are not sending,Check your internet connection.,Make sure Wi-Fi or Ethernet is connected and try opening a website.,Open Chrome and try visiting any website. If a website opens your internet is working.
-Emails are not sending,Check the Outbox folder.,Check whether the email is stuck in the Outbox.,Open the Outbox folder and check whether the message is waiting to be sent.
-Emails are not sending,Verify the recipient email address.,Check that the recipient email address is entered correctly.,Look at the To field and check the email address carefully.
-Emails are not sending,Check mailbox storage.,If your mailbox is full remove unnecessary emails according to your organization's policy.,Check your mailbox storage and see whether it is full.
-Emails are not sending,Try sending a small test email.,Send a simple test email to a trusted recipient.,Create a short test email and send it to a trusted recipient.
-Email client is not syncing,Check your internet connection.,Make sure your device is connected to the internet.,Open a website in your browser to confirm that the internet is working.
-Email client is not syncing,Refresh the email account.,Refresh the mailbox and check whether new messages appear.,Use the refresh or reload option in your email application.
-Email client is not syncing,Check the account sync settings.,Make sure email synchronization is enabled for the account.,Open the email account settings and check whether synchronization is enabled.
-Email client is not syncing,Check the account connection.,Make sure the email account is connected and signed in correctly.,Open account settings and verify that the email account is connected.
-Email client is not syncing,Restart the email application.,Close the email application and open it again.,Close the email application completely and then start it again.
-Email is not working,Check your internet connection.,Make sure your device is connected to the internet.,Open a website in your browser to check whether the internet connection works.
-Email is not working,Refresh your email mailbox.,Refresh the mailbox and check whether the email service responds.,Click the refresh or reload option in your email application or email website.
-Email is not working,Check your email account status.,Make sure your email account is active and signed in.,Open your account settings and check the account status.
-Email is not working,Check mailbox storage.,If your mailbox is full remove unnecessary emails according to your organization's policy.,Check whether your mailbox has enough available storage.
-Email is not working,Restart the email application.,Close the email application and open it again.,Close the email application completely and start it again.
-Outlook is not opening,Check whether Outlook is already running.,Open Task Manager and close any Outlook process that is still running.,Open Task Manager and look for Outlook in the list of running applications.
-Outlook is not opening,Restart the computer.,Restart the computer and try opening Outlook again.,Save your work and restart the computer from the Start menu.
-Outlook is not opening,Try opening Outlook again.,Try opening Outlook from the Start menu after restarting the computer.,Open the Start menu and select Outlook.
-Outlook is not opening,Repair the Outlook application.,Use Windows Apps settings to repair the Outlook application.,Open Windows Settings and use Apps settings to find the repair option for Outlook.
-Outlook is not opening,Contact Application Support.,If Outlook still does not open contact Application Support.,Contact the Application Support team for further assistance.
+"Email is not working","Check your internet connection.","Make sure your device is connected to the internet.","Check whether your device is connected to Wi-Fi or Ethernet."
+"Email is not working","Restart Email.","Close Email completely and start it again.","Close Email and open it again from the Start menu."
+"Email is not working","Refresh your email mailbox.","Refresh the mailbox and check whether emails are loading.","Click the refresh option in your email application."
+"Email is not working","Check your email account settings.","Make sure your email account is correctly configured and signed in.","Open the email account settings and verify the account details."
+"Email is not working","Restart the computer.","Restart the computer and try opening the email application again.","Save your work and restart the computer."
+"Emails are not receiving","Check your internet connection.","Make sure Wi-Fi or Ethernet is connected and try opening a website.","Check whether you can access any website."
+"Emails are not receiving","Refresh your email mailbox.","Refresh the mailbox and check for new emails again.","Use the refresh option in your email application."
+"Emails are not receiving","Check the Junk or Spam folder.","Check the Junk or Spam folder for the missing email.","Open the Junk or Spam folder and look for the missing email."
+"Emails are not receiving","Check your mailbox storage.","If your mailbox is full remove unnecessary emails according to your organization's policy.","Check the mailbox storage information and see whether the mailbox is full."
+"Emails are not receiving","Check the email account connection.","Make sure your email account is active and properly connected.","Check whether the email account is signed in and connected."
+"Emails are not sending","Check your internet connection.","Make sure your device is connected to the internet.","Try opening a website to confirm that the internet is working."
+"Emails are not sending","Verify the recipient email address.","Make sure the recipient email address is correct.","Check the spelling of the recipient email address."
+"Emails are not sending","Check the Outbox.","If the email is stuck in the Outbox, try sending it again.","Open the Outbox and check whether the email is waiting there."
+"Emails are not sending","Check mailbox storage.","If the mailbox is full, remove unnecessary emails according to your organization's policy.","Check whether enough mailbox storage is available."
+"Emails are not sending","Restart Email.","Close Email completely and open it again.","Close Email and start it again."
+"Email client is not syncing","Check your internet connection.","Make sure the device has a stable internet connection.","Try opening a website to check the connection."
+"Email client is not syncing","Refresh the mailbox.","Refresh the mailbox and check whether synchronization starts.","Use the refresh option in the email application."
+"Email client is not syncing","Restart the email application.","Close the email application completely and start it again.","Close the application and open it again."
+"Email client is not syncing","Check synchronization settings.","Make sure synchronization is enabled for the email account.","Open the account settings and check synchronization options."
+"Email client is not syncing","Restart the computer.","Restart the computer and check synchronization again.","Save your work and restart the computer."
+"Outlook is not opening","Check whether Outlook is already running.","Open Task Manager and close any Outlook process that is still running.","Open Task Manager and look for Microsoft Outlook under running processes."
+"Outlook is not opening","Restart the computer.","Restart the computer and try opening Outlook again.","Save your work and restart the computer."
+"Outlook is not opening","Try opening Outlook again.","If Outlook still does not open, continue to the next troubleshooting step.","Try opening Outlook from the Start menu."
+"Outlook is not opening","Repair the Outlook application.","Use the Windows application repair option for Microsoft Office or Outlook.","Open Windows Apps settings and select the repair option for Microsoft Office."
+"Outlook is not opening","Contact Application Support.","If Outlook still does not open, contact Application Support.","Application Support can investigate the application issue further."
+"VPN is not connecting","Check your internet connection.","Make sure Wi-Fi or Ethernet is connected and try opening a website.","Check whether you can access a website."
+"VPN is not connecting","Verify your VPN username and password.","Make sure the VPN credentials are correct and try again.","Check the username and password used for the VPN."
+"VPN is not connecting","Restart the VPN application.","Close the VPN application completely and start it again.","Close the VPN application and open it again."
+"VPN is not connecting","Check your VPN connection settings.","Verify that the VPN configuration is correct.","Open the VPN settings and check the configured connection."
+"VPN is not connecting","Try connecting to the VPN again.","If the VPN still does not connect, contact the Network Team.","Start the VPN connection and wait for it to connect."
+"VPN connection keeps dropping","Check network stability.","Make sure the Wi-Fi or Ethernet connection is stable.","Check whether the internet connection is frequently disconnecting."
+"VPN connection keeps dropping","Restart the VPN client.","Close the VPN client and start it again.","Open the VPN application again."
+"VPN connection keeps dropping","Check Wi-Fi or Ethernet connection.","Reconnect to Wi-Fi or Ethernet and try the VPN again.","Check whether the device is properly connected to the network."
+"VPN connection keeps dropping","Disconnect and reconnect VPN.","Disconnect the VPN and establish a new connection.","Turn off the VPN connection and connect again."
+"VPN connection keeps dropping","Restart the computer.","Restart the computer and try the VPN again.","Save your work and restart the computer."
+"Unable to access VPN","Check your internet connection.","Make sure the internet connection is working.","Try opening a website."
+"Unable to access VPN","Verify VPN credentials.","Make sure the VPN username and password are correct.","Check the credentials used for the VPN."
+"Unable to access VPN","Check VPN configuration.","Verify the VPN connection configuration.","Open VPN settings and check the connection details."
+"Unable to access VPN","Restart VPN client.","Close and reopen the VPN application.","Restart the VPN application."
+"Unable to access VPN","Try connecting again.","If access is still unavailable, contact the Network Team.","Try establishing the VPN connection again."
+"Laptop is not turning on","Connect the charger.","Make sure the charger is properly connected to the laptop and power outlet.","Connect the laptop charger and check the charging indicator."
+"Laptop is not turning on","Check the power cable.","Make sure the power cable is not loose or damaged.","Check both ends of the power cable."
+"Laptop is not turning on","Check the charging indicator.","If there is no charging indicator, try another compatible power outlet.","Look for the charging light on the laptop."
+"Laptop is not turning on","Hold the power button for a few seconds.","Hold the power button for several seconds and try again.","Press and hold the laptop power button."
+"Laptop is not turning on","Try turning the laptop on again.","If the laptop still does not turn on, contact Desktop Support.","Press the power button again after checking the charger."
+"Laptop is running very slow","Close unnecessary applications.","Close applications that are not currently required.","Open the taskbar or Task Manager and close unnecessary applications."
+"Laptop is running very slow","Restart the laptop.","Restart the laptop and check its performance again.","Save your work and restart the laptop."
+"Laptop is running very slow","Check Task Manager.","Use Task Manager to identify applications using high CPU or memory.","Open Task Manager using Ctrl + Shift + Esc."
+"Laptop is running very slow","Check available storage.","Free up unnecessary storage space if the disk is nearly full.","Open Windows storage settings and check available space."
+"Laptop is running very slow","Disable unnecessary startup applications.","Disable applications that do not need to start automatically.","Open Task Manager and review Startup applications."
+"Laptop screen is not working","Check charger connection.","Make sure the laptop is receiving power.","Connect the charger and check the power indicator."
+"Laptop screen is not working","Increase screen brightness.","Increase the screen brightness using the keyboard brightness controls.","Use the laptop brightness keys to increase brightness."
+"Laptop screen is not working","Disconnect external devices.","Remove external monitors and other connected devices and restart the laptop.","Disconnect external devices such as monitors or USB devices."
+"Laptop screen is not working","Restart the laptop.","Restart the laptop and check the screen again.","Restart the computer using the power button."
+"Laptop screen is not working","Check whether the power indicator is working.","If the screen remains blank, contact Desktop Support.","Check whether the laptop power light is on."
+"Forgot my password","Open the password recovery page.","If the password recovery page does not work, contact the Access Team.","Open your organization's password recovery page."
+"Forgot my password","Enter your registered username.","Make sure the username is entered correctly.","Enter the username associated with your account."
+"Forgot my password","Complete identity verification.","Complete the required identity verification process.","Follow the verification instructions shown on the password recovery page."
+"Forgot my password","Create a new password.","Create a new password according to your organization's password policy.","Enter and confirm a new password."
+"Forgot my password","Log in again using the new password.","If you still cannot log in, contact the Access Team.","Use the new password to sign in again."
+"Password reset required","Open the password reset option.","If password reset does not work, contact the Access Team.","Open the password reset option provided by your organization."
+"Password reset required","Enter your username.","Make sure your username is correct.","Enter your registered username."
+"Password reset required","Verify your identity.","Complete the required identity verification.","Follow the identity verification instructions."
+"Password reset required","Create a new password.","Choose a new password that meets the password policy.","Enter a new password and confirm it."
+"Password reset required","Log in again using the new password.","If you still cannot log in, contact the Access Team.","Try signing in with the new password."
+"Account is locked","Wait for the account lock period.","If the account remains locked, contact the Access Team.","Wait until the organization's account lock period ends."
+"Account is locked","Try logging in again.","If the account is still locked, continue with the next step.","Enter your username and password again."
+"Account is locked","Do not repeatedly enter incorrect passwords.","Repeated incorrect attempts may keep the account locked.","Avoid entering incorrect passwords repeatedly."
+"Account is locked","Use the account unlock option if available.","If the unlock option does not work, contact the Access Team.","Use the organization's account unlock option."
+"Account is locked","Contact the Access Team.","The Access Team can investigate the locked account.","Contact the Access Team for account assistance."
+"Antivirus detected a threat","Do not open the suspicious file.","If the file was opened, contact the Security Team immediately.","Avoid opening or running the detected file."
+"Antivirus detected a threat","Disconnect from the network if required.","Disconnect the affected device from the network if the security alert requires it.","Disconnect Wi-Fi or Ethernet if instructed by your organization's security procedure."
+"Antivirus detected a threat","Run a full antivirus scan.","Run a complete system scan using the approved antivirus software.","Open the antivirus application and start a full scan."
+"Antivirus detected a threat","Quarantine or remove the detected threat.","Follow the antivirus software instructions to quarantine or remove the threat.","Use the quarantine or remove option provided by the antivirus."
+"Antivirus detected a threat","Restart the computer.","If the threat remains detected, contact the Security Team immediately.","Restart the computer after completing the security scan."
+"Suspicious activity detected","Do not interact with suspicious files or links.","Avoid opening suspicious files or links and contact the Security Team if necessary.","Do not click or open anything associated with the suspicious activity."
+"Suspicious activity detected","Disconnect the affected device if necessary.","Disconnect the device from the network if required by your security procedure.","Disconnect Wi-Fi or Ethernet if instructed."
+"Suspicious activity detected","Run a security scan.","Run a security scan using approved security software.","Open the security software and start a scan."
+"Suspicious activity detected","Record the alert details.","Note the alert message and relevant details for the Security Team.","Record the alert information shown on the screen."
+"Suspicious activity detected","Report the incident.","Report the suspicious activity to the Security Team.","Use your organization's security incident reporting process."
+"Phishing email received","Do not click any links.","If you clicked a suspicious link, contact the Security Team immediately.","Avoid clicking links in the suspicious email."
+"Phishing email received","Do not open attachments.","If an attachment was opened, contact the Security Team immediately.","Do not open files attached to the suspicious email."
+"Phishing email received","Do not reply to the sender.","Do not provide any personal or company information to the sender.","Avoid replying to the suspicious email."
+"Phishing email received","Report the email as phishing.","Use your organization's email reporting option to report the phishing message.","Use the Report Phishing option in your email application."
+"Phishing email received","Delete the suspicious email.","If you entered credentials, contact the Security Team immediately.","Delete the suspicious email after reporting it."
+Account may be compromised,Disconnect the device from the network if suspicious activity is ongoing.,If suspicious activity continues contact the Security Team.,Disconnect the affected device from the network and contact the Security Team.
+Account may be compromised,Change your account password from a trusted device.,If you cannot change the password contact the Security Team.,Use a trusted device to change the password and create a strong unique password.
+Account may be compromised,Enable or verify multi-factor authentication.,If MFA cannot be enabled contact the Security Team.,Enable MFA to add an additional layer of protection to your account.
+Account may be compromised,Review recent account activity for suspicious login attempts.,Report any suspicious activity to the Security Team.,Check recent login activity and look for unfamiliar devices or locations.
+Account may be compromised,Contact the Security Team and report the suspected account compromise.,The Security Team will investigate the suspicious activity.,Provide details about the suspicious activity to the Security Team.
